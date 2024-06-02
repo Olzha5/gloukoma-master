@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "965203031678",
+    "project_id": "education-app-95660",
+    "storage_bucket": "education-app-95660.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965203031678:android:bad75f818d3ce1807b0a2f",
+        "android_client_info": {
+          "package_name": "com.example.gloukoma"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjuxj-jnsxIOQX6QR_HtNe5294RXR60ac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
