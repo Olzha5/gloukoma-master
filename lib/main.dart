@@ -7,15 +7,10 @@ import 'package:gloukoma/screens/reset_password_screen.dart';
 import 'package:gloukoma/screens/signup_screen.dart';
 import 'package:gloukoma/screens/verify_email_screen.dart';
 import 'package:gloukoma/screens/about_glaukoma_screen.dart';
-import 'package:gloukoma/screens/Connect_screen.dart';
+import 'package:gloukoma/screens/connect_screen.dart';
 import 'package:gloukoma/screens/my_data_screen.dart';
-
-// Firebase Авторизация - Сценарии:
-//    Войти - Почта / Пароль
-//    Личный кабинет
-//    Зарегистрироваться - Почта / Пароль два раза
-//        Подтвердить почту - Отправить письмо снова / Отменить
-//    Сбросить пароль - Почта
+import 'package:gloukoma/screens/course_screen.dart';
+import 'package:gloukoma/screens/user_ranking_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +36,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/reset_password': (context) => const ResetPasswordScreen(),
         '/verify_email': (context) => const VerifyEmailScreen(),
-        '/about_glaucoma': (context) => const About(),
+        '/about_glaukoma': (context) => const About(),
         '/connect': (context) => Connect(),
         '/my_data': (context) => Mydata(),
       },
@@ -62,7 +57,8 @@ class _MainScreenState extends State<MainScreen> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    PlaceholderWidget('Чат'), // Здесь вы можете заменить PlaceholderWidget на ваш экран чата
+    CourseScreen(),
+    UserRankingScreen(),
     AccountScreen(),
   ];
 
@@ -75,22 +71,20 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
+      body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
             label: 'Оқу',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.smartphone),
-          //   label: 'Курс',
-          // ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Чат',
+            icon: Icon(Icons.book),
+            label: 'Курс',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.leaderboard),
+            label: 'Рейтинг',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

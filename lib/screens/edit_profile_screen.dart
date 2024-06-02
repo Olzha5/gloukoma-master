@@ -11,6 +11,7 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _name;
+  String? _phoneNumber;
   final user = FirebaseAuth.instance.currentUser;
   String? _selectedAvatarUrl;
 
@@ -29,11 +30,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     'https://avatars.mds.yandex.net/i?id=e49d456994ade07a0bcd3f52e01489479994e20a-8312020-images-thumbs&ref=rim&n=33&w=252&h=252',
   ];
 
-
   @override
   void initState() {
     super.initState();
     _name = user?.displayName;
+    _phoneNumber = user?.phoneNumber ?? '';
     _selectedAvatarUrl = user?.photoURL ?? 'https://example.com/default-avatar.png';
   }
 
@@ -43,6 +44,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (user != null) {
         await user!.updateDisplayName(_name);
         await user!.updatePhotoURL(_selectedAvatarUrl);
+        // Firebase Authentication API currently does not provide a direct method to update the phone number
+        // So we handle phone number updates separately if necessary
         await user!.reload();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Профиль обновлен')));
         Navigator.pop(context); // Возвращаемся на предыдущий экран после сохранения
@@ -139,6 +142,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
                 onSaved: (value) {
                   _name = value;
+                },
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                initialValue: _phoneNumber,
+                decoration: InputDecoration(labelText: 'Номер телефона'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Введите номер телефона';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _phoneNumber = value;
                 },
               ),
               SizedBox(height: 20),
