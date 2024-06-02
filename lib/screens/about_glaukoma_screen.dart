@@ -11,7 +11,9 @@ class About extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          'Глаукома',
+
+          'Education app',
+
         ),
       ),
       body: SingleChildScrollView(
@@ -42,13 +44,15 @@ class Step {
 
 List<Step> getSteps() {
   return [
-    Step('Что такое глаукома',' ', '6GMVx6DJ0FE'),
-    Step('Симптомы Глаукомы', ' ','niWSC4jibaE' ),
-    Step('Диагностика Глаукомы',' ','6GMVx6DJ0FE' ),
-    Step('Медикаментозное лечение Глаукомы',' ','6GMVx6DJ0FE' ),
-    Step('Лазерное лечение',' ','6GMVx6DJ0FE' ),
-    Step('Хирургическое лечение Глаукомы',' ','6GMVx6DJ0FE' ),
-    Step('Жизнь с Глаукомой',' ','6GMVx6DJ0FE' )
+
+    Step('Бұл не Education app?',' ', '6GMVx6DJ0FE'),
+    Step('Қолдану аясы', ' ','niWSC4jibaE' ),
+    Step('Функциялармен танысу',' ','6GMVx6DJ0FE' ),
+    Step('Базамен байланыс',' ','6GMVx6DJ0FE' ),
+    Step('Балдық көрсеткіш',' ','6GMVx6DJ0FE' ),
+    Step('Education app PLUS+',' ','6GMVx6DJ0FE' ),
+    Step('Жаңартулар',' ','6GMVx6DJ0FE' )
+
   ];
 }
 //controller

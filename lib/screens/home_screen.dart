@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gloukoma/screens/quiz_result_screen.dart';
 import 'package:gloukoma/services/upload_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
@@ -87,10 +88,14 @@ class Question {
   final String questionText;
   final Map<String, String> options;
 
+  final String rightOption;
+
+
   Question({
     required this.id,
     required this.questionText,
     required this.options,
+    required this.rightOption,
   });
 
   factory Question.fromJson(Map<String, dynamic> json) {
@@ -98,9 +103,14 @@ class Question {
       id: json['id'] ?? 0,
       questionText: json['text'] ?? '',
       options: Map<String, String>.from(json['options'] ?? {}),
+
+      rightOption: json['right_option']?.toString() ?? '', // Ensure right_option is treated as a string
+
     );
   }
 }
+
+
 
 class ApiService {
   static const String coursesUrl = 'http://olzhasna.beget.tech/courses/';
@@ -479,8 +489,9 @@ class _LessonScreenState extends State<LessonScreen> {
                             icon: Icon(Icons.download),
                             label: Text('Құжатты жүктеу'),
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.blue,
-                              onPrimary: Colors.white,
+
+                              foregroundColor: Colors.white, backgroundColor: Colors.blue,
+
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -531,6 +542,22 @@ class _QuizScreenState extends State<QuizScreen> {
     futureQuiz = apiService.fetchQuiz(widget.quizId);
   }
 
+
+  void _submitQuiz(List<Question> questions) {
+    int score = 0;
+    for (var question in questions) {
+      if (selectedAnswers[question.id] == question.rightOption) {
+        score += 1;
+      }
+    }
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => QuizResultScreen(score: score, totalQuestions: questions.length),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -556,47 +583,62 @@ class _QuizScreenState extends State<QuizScreen> {
                   return Center(child: Text('Қате: ${questionSnapshot.error}'));
                 } else {
                   final questions = questionSnapshot.data!;
-                  return ListView.builder(
-                    itemCount: questions.length,
-                    itemBuilder: (context, index) {
-                      final question = questions[index];
-                      return Card(
-                        margin: EdgeInsets.all(10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Сұрақ ${index + 1}',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: questions.length,
+                          itemBuilder: (context, index) {
+                            final question = questions[index];
+                            return Card(
+                              margin: EdgeInsets.all(10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              SizedBox(height: 10),
-                              Text(
-                                question.questionText,
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              SizedBox(height: 10),
-                              ...question.options.entries.map((entry) => ListTile(
-                                title: Text(entry.value),
-                                leading: Radio<String>(
-                                  value: entry.key,
-                                  groupValue: selectedAnswers[question.id],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedAnswers[question.id] = value!;
-                                    });
-                                  },
+                              child: Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Сұрақ ${index + 1}',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      question.questionText,
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    SizedBox(height: 10),
+                                    ...question.options.entries.map((entry) => ListTile(
+                                      title: Text(entry.value),
+                                      leading: Radio<String>(
+                                        value: entry.key,
+                                        groupValue: selectedAnswers[question.id],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedAnswers[question.id] = value!;
+                                          });
+                                        },
+                                      ),
+                                    )),
+                                  ],
                                 ),
-                              )),
-                            ],
-                          ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () => _submitQuiz(questions),
+                          child: Text('Тестті аяқтау'),
+                        ),
+                      ),
+                    ],
+
                   );
                 }
               },
@@ -607,8 +649,6 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 }
-
-
 
 
 

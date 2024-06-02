@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Connect extends StatelessWidget {
@@ -14,73 +11,73 @@ class Connect extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          'Связь с Офтальматологом',
+
+          'Орталықпен байланыс',
         ),
       ),
       body: Center(
-        child:
-
-          Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            'Doctor Dias',
-                          ),
-                          Text(
-                            'address dotors',
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.email,
-                              size: 30,
-                            ),
-                            onPressed: () async {
-                              await launchUrl(Uri(
-                                  scheme: 'mailto',
-                                  path: 'Dificonfig@gmail.com',
-                                  query: {
-                                    'subject': 'hello',
-                                  }
-                                      .entries
-                                      .map((MapEntry<String, String> e) =>
-                                  '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-                                      .join('&')));
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.call_rounded,
-                              size: 30,
-                            ),
-                            onPressed: () async {
-                              await launchUrl(Uri(
-                                scheme: 'tel',
-                                path: '+77765228256',
-                              ));
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            contactRow('Admin Nurgali', 'address admin', 'nurgalishansharov@gmail.com', '+77474862501'),
+            Divider(),
+            contactRow('Admin Olzhas', 'address admin2', 'olzhasabukhan@gmial.com', '+77763625015'),
+          ],
+        ),
       ),
     );
   }
+
+  Widget contactRow(String name, String address, String email, String phone) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text(name),
+            Text(address),
+          ],
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.email,
+                size: 30,
+              ),
+              onPressed: () async {
+                await launchUrl(Uri(
+                    scheme: 'mailto',
+                    path: email,
+                    query: {
+                      'subject': 'hello',
+                    }
+                        .entries
+                        .map((MapEntry<String, String> e) =>
+                    '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                        .join('&')));
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.call_rounded,
+                size: 30,
+              ),
+              onPressed: () async {
+                await launchUrl(Uri(
+                  scheme: 'tel',
+                  path: phone,
+                ));
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }
+
