@@ -113,11 +113,14 @@ class Question {
 
 
 class ApiService {
+  final user = FirebaseAuth.instance.currentUser;
   static const String coursesUrl = 'http://olzhasna.beget.tech/courses/';
   static const String lessonsUrl = 'http://olzhasna.beget.tech/lessons/';
   static const String quizzesUrl = 'http://olzhasna.beget.tech/quizzes/';
   static const String questionsUrl = 'http://olzhasna.beget.tech/questions/';
   static const String usersUrl = 'http://olzhasna.beget.tech/users/';
+  static const String coursesAddUrl = 'http://olzhasna.beget.tech/api/addcourses/list/';
+
 
   Future<List<Course>> fetchCourses() async {
     final response = await http.get(Uri.parse(coursesUrl));
@@ -125,6 +128,18 @@ class ApiService {
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body);
       return body.map((dynamic item) => Course.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load courses');
+    }
+  }
+
+  Future<List<Course>> fetchAddCourses() async {
+    final response = await http.get(Uri.parse("$coursesAddUrl${user?.email}/"));
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final coursesJson = jsonResponse['courses'] as List;
+      return coursesJson.map((courseJson) => Course.fromJson(courseJson)).toList();
     } else {
       throw Exception('Failed to load courses');
     }
@@ -187,6 +202,33 @@ class ApiService {
 
       throw Exception('Failed to fetch user');
     }
+  }
+
+  Future<void> deleteCourseToUser(String email, int courseId) async {
+    final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/course/delete/$email/$courseId'));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> user = jsonDecode(response.body);
+      final userId = user['id'];
+      final List<int> courses = List<int>.from(user['courses'] ?? []);
+      courses.add(courseId);
+
+
+    } else {
+
+      throw Exception('Failed to fetch user');
+    }
+  }
+  Future<void> addScoreToUserCourse(String email, int courseId, int score) async {
+    final response = await http.get(Uri.parse('api/score/$email/$score/$courseId/'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> body = jsonDecode(response.body);
+      return body['username'] ?? 'Unknown';
+    } else {
+      throw Exception('Failed to load author');
+    }
+
   }
 }
 
@@ -511,7 +553,7 @@ class _LessonScreenState extends State<LessonScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => QuizScreen(quizId: widget.quizId),
+            builder: (context) => QuizScreen(quizId: widget.quizId, courseId: widget.courseId,),
           ));
         },
         label: Text('Тест тапсыру'),
@@ -523,11 +565,12 @@ class _LessonScreenState extends State<LessonScreen> {
 
 class QuizScreen extends StatefulWidget {
   final int quizId;
+  final int courseId;
 
-  const QuizScreen({Key? key, required this.quizId}) : super(key: key);
+  const QuizScreen({Key? key, required this.quizId, required this.courseId }) : super(key: key);
 
   @override
-  _QuizScreenState createState() => _QuizScreenState();
+  _QuizScreenState createState() => _QuizScreenState(courseId);
 }
 
 class _QuizScreenState extends State<QuizScreen> {
@@ -536,6 +579,8 @@ class _QuizScreenState extends State<QuizScreen> {
   final ApiService apiService = ApiService();
   Map<int, String> selectedAnswers = {};
 
+  _QuizScreenState(int courseId);
+
   @override
   void initState() {
     super.initState();
@@ -543,7 +588,7 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
 
-  void _submitQuiz(List<Question> questions) {
+  void _submitQuiz(List<Question> questions , courseId) {
     int score = 0;
     for (var question in questions) {
       if (selectedAnswers[question.id] == question.rightOption) {
@@ -555,6 +600,11 @@ class _QuizScreenState extends State<QuizScreen> {
         builder: (context) => QuizResultScreen(score: score, totalQuestions: questions.length),
       ),
     );
+    final String? email = (FirebaseAuth.instance.currentUser?.email) != null? FirebaseAuth.instance.currentUser?.email:"madiarduysenbay@gmail.com";
+    apiService.addScoreToUserCourse(email!,courseId, score);
+
+
+
   }
 
 
@@ -633,7 +683,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                          onPressed: () => _submitQuiz(questions),
+                          onPressed: () => _submitQuiz(questions,widget.courseId),
                           child: Text('Тестті аяқтау'),
                         ),
                       ),

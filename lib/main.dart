@@ -14,6 +14,7 @@ import 'package:gloukoma/screens/my_data_screen.dart';
 import 'package:gloukoma/screens/course_screen.dart';
 import 'package:gloukoma/screens/user_ranking_screen.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

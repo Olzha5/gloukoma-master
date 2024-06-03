@@ -16,12 +16,12 @@ class _CourseScreenState extends State<CourseScreen> {
   @override
   void initState() {
     super.initState();
-    futureCourses = apiService.fetchCourses();
+    futureCourses = apiService.fetchAddCourses();
   }
 
   Future<void> _refreshCourses() async {
     setState(() {
-      futureCourses = apiService.fetchCourses();
+      futureCourses = apiService.fetchAddCourses();
     });
   }
 
@@ -87,8 +87,14 @@ class _CourseScreenState extends State<CourseScreen> {
                       ),
                       trailing: IconButton(
                         icon: Icon(Icons.delete),
-                        onPressed: () {
-                          // Здесь вы можете добавить действие для мусорного бака
+                        onPressed: () async {
+                          try {
+                            await apiService.deleteCourseToUser(email, course.id);
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Курс өшірілді')));
+                            _refreshCourses();
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Қате: $e')));
+                          }
                         },
                       ),
                       onTap: () {
