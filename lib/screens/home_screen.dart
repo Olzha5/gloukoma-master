@@ -311,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 300,
                     height: letter,
                     child: ListTile(
-                      title: const Text('Глаукома туралы'),
+                      title: const Text('Біз туралы'),
                       onTap: () {
                         Navigator.of(context).pushNamed('/about_glaucoma');
                       },
@@ -348,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 300,
                     height: letter,
                     child: ListTile(
-                      title: const Text('Офтальмологпен байланыс'),
+                      title: const Text('Орталықпен байланыс'),
                       onTap: () {
                         Navigator.of(context).pushNamed('/connect');
                       },
