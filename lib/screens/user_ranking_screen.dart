@@ -3,6 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+Future<List<User>> fetchUsers({top = true}) async {
+  final user = FirebaseAuth.instance.currentUser;
+  final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/get_top/${user?.email}/'));  // Замените на реальный URL
+
+  if (response.statusCode == 200) {
+
+    final jsonResponse = json.decode(response.body);
+    List<User> users = [];
+    for (int i = 0; i < jsonResponse[(top)? 'top' : 'score'].length; i++) {
+      users.add(User.fromJson(jsonResponse[(top)? 'top' : 'score'][i], i + 1));
+    }
+    return users;
+  } else {
+    throw Exception('Failed to load users');
+  }
+}
+
 class User {
   final String name;
   final int score;
@@ -45,21 +62,7 @@ class _UserRankingScreenState extends State<UserRankingScreen> {
     futureUsers = fetchUsers();
   }
 
-  Future<List<User>> fetchUsers() async {
-    final user = FirebaseAuth.instance.currentUser;
-    final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/get_top/${user?.email}/'));  // Замените на реальный URL
 
-    if (response.statusCode == 200) {
-      final jsonResponse = json.decode(response.body);
-      List<User> users = [];
-      for (int i = 0; i < jsonResponse['top'].length; i++) {
-        users.add(User.fromJson(jsonResponse['top'][i], i + 1));
-      }
-      return users;
-    } else {
-      throw Exception('Failed to load users');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

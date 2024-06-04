@@ -101,10 +101,11 @@ class _MainScreenState extends State<MainScreen> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.blue, // барлық элементтер көк түсте
         onTap: _onItemTapped,
       ),
     );
-  }
+ }
 }
 
 class PlaceholderWidget extends StatelessWidget {
