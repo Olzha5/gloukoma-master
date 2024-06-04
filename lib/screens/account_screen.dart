@@ -148,7 +148,7 @@ class _AccountScreenState extends State<AccountScreen> {
             leading: Icon(Icons.info_outline, color: Colors.blue),
             title: Text('Біз туралы'),
             onTap: () {
-              Navigator.of(context).pushNamed('/about_glaucoma');
+              Navigator.of(context).pushNamed('/about_glaucoma_screen');
             },
           ),
           SizedBox(height: 20),
