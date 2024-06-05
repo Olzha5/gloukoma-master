@@ -150,7 +150,7 @@ class ApiService {
   Future<List<Lesson>> fetchLessons(List<int> lessonIds) async {
     final response = await http.get(Uri.parse(lessonsUrl));
     if (response.statusCode == 200) {
-      List<dynamic> body = jsonDecode(response.body);
+      List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
       List<Lesson> allLessons = body.map((dynamic item) => Lesson.fromJson(item)).toList();
       return allLessons.where((lesson) => lessonIds.contains(lesson.id)).toList();
     } else {
@@ -158,11 +158,12 @@ class ApiService {
     }
   }
 
+
   Future<Quiz> fetchQuiz(int quizId) async {
     final response = await http.get(Uri.parse('$quizzesUrl$quizId/'));
 
     if (response.statusCode == 200) {
-      return Quiz.fromJson(jsonDecode(response.body));
+      return Quiz.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
       throw Exception('Failed to load quiz');
     }
@@ -171,7 +172,7 @@ class ApiService {
   Future<List<Question>> fetchQuestions(List<int> questionIds) async {
     final response = await http.get(Uri.parse(questionsUrl));
     if (response.statusCode == 200) {
-      List<dynamic> body = jsonDecode(response.body);
+      List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
       List<Question> allQuestions = body.map((dynamic item) => Question.fromJson(item)).toList();
       return allQuestions.where((question) => questionIds.contains(question.id)).toList();
     } else {
@@ -183,7 +184,7 @@ class ApiService {
     final response = await http.get(Uri.parse('$usersUrl$authorId/'));
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> body = jsonDecode(response.body);
+      Map<String, dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
       return body['username'] ?? 'Unknown';
     } else {
       throw Exception('Failed to load author');
@@ -194,7 +195,7 @@ class ApiService {
     final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/course/${email}/${courseId}'));
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> user = jsonDecode(response.body);
+      final Map<String, dynamic> user = jsonDecode(utf8.decode(response.bodyBytes));
       final userId = user['id'];
       final List<int> courses = List<int>.from(user['courses'] ?? []);
       courses.add(courseId);
@@ -210,11 +211,10 @@ class ApiService {
     final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/course/delete/$email/$courseId'));
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> user = jsonDecode(response.body);
+      final Map<String, dynamic> user = jsonDecode(utf8.decode(response.bodyBytes));
       final userId = user['id'];
       final List<int> courses = List<int>.from(user['courses'] ?? []);
       courses.add(courseId);
-
 
     } else {
 
@@ -222,10 +222,11 @@ class ApiService {
     }
   }
   Future<void> addScoreToUserCourse(String email, int courseId, int score) async {
-    final response = await http.get(Uri.parse('api/score/$email/$score/$courseId/'));
+    score = score*10;
+    final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/score/$email/$score/$courseId/'));
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> body = jsonDecode(response.body);
+      Map<String, dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
       return body['username'] ?? 'Unknown';
     } else {
       throw Exception('Failed to load author');
@@ -597,13 +598,14 @@ class _QuizScreenState extends State<QuizScreen> {
         score += 1;
       }
     }
+    final String? email = (FirebaseAuth.instance.currentUser?.email) != null? FirebaseAuth.instance.currentUser?.email:"madiarduysenbay@gmail.com";
+    apiService.addScoreToUserCourse(email!,courseId, score);
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => QuizResultScreen(score: score, totalQuestions: questions.length),
       ),
     );
-    final String? email = (FirebaseAuth.instance.currentUser?.email) != null? FirebaseAuth.instance.currentUser?.email:"madiarduysenbay@gmail.com";
-    apiService.addScoreToUserCourse(email!,courseId, score);
+
 
 
 

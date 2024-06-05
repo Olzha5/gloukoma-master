@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:gloukoma/screens/account_screen.dart';
@@ -15,6 +16,7 @@ import 'package:gloukoma/screens/course_screen.dart';
 import 'package:gloukoma/screens/user_ranking_screen.dart';
 
 
+var user = FirebaseAuth.instance.currentUser;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const MainScreen(),
 
         '/login': (context) => const LoginScreen(),
-        '/signup': (context) => const SignUpScreen(),
+        '/signup': (context) =>  SignUpScreen(),
         '/reset_password': (context) => const ResetPasswordScreen(),
         '/verify_email': (context) => const VerifyEmailScreen(),
 
@@ -48,7 +50,7 @@ class MyApp extends StatelessWidget {
         '/connect': (context) => Connect(),
         '/my_data': (context) => Mydata(),
       },
-      initialRoute: '/',
+      initialRoute: user != null? '/':'/login',
     );
   }
 }

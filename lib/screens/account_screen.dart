@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'edit_profile_screen.dart';
 import 'home_screen.dart';
-
 import 'package:http/http.dart' as http;
+
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+  const AccountScreen({Key? key}) : super(key: key);
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  final user = FirebaseAuth.instance.currentUser;
-  late Future<User> futureUser;
+  final firebaseUser = FirebaseAuth.instance.currentUser;
+  late Future<AppUser> futureUser;
 
   Future<void> signOut() async {
     final navigator = Navigator.of(context);
@@ -47,28 +47,21 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
-  Future<User> fetchUser() async {
-    // Сіздің API шақыру логикаңыз осында болады
-    //
-    final user = FirebaseAuth.instance.currentUser;
-    final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/get_top/${user?.email}/'));  // Замените на реальный URL
-
+  Future<AppUser> fetchUser() async {
+    final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/get_top/${firebaseUser?.email}/'));
+    print(firebaseUser?.email);
     if (response.statusCode == 200) {
-
       final jsonResponse = json.decode(response.body);
-      var user = User.fromJson(jsonResponse['top'][0]);
-
-      return user;
+      final scoreData = jsonResponse['score'];
+      return AppUser(
+        displayName: scoreData['username'],
+        phoneNumber: firebaseUser?.phoneNumber,
+        photoURL: firebaseUser?.photoURL,
+        score: scoreData['total_score'] ?? 0,
+      );
     } else {
-      throw Exception('Failed to load users');
+      throw Exception('Failed to load user data');
     }
-
-    return User(
-      displayName: 'Имя пользователя',
-      phoneNumber: '+7 (000) 000-00-00',
-      photoURL: 'https://example.com/default-avatar.png',
-      score: 100,
-    ); // Деректер қайтарылатын орын (мысалы)
   }
 
   @override
@@ -84,7 +77,7 @@ class _AccountScreenState extends State<AccountScreen> {
           ),
         ],
       ),
-      body: FutureBuilder<User>(
+      body: FutureBuilder<AppUser>(
         future: futureUser,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -204,25 +197,16 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 }
 
-class User {
+class AppUser {
   final String? displayName;
   final String? phoneNumber;
   final String? photoURL;
   final int score;
 
-  User({
+  AppUser({
     this.displayName,
     this.phoneNumber,
     this.photoURL,
     required this.score,
   });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      displayName: json['username'],
-      phoneNumber: json['phoneNumber'],
-      photoURL: json['photoURL'],
-      score: json['total_score'],
-    );
-  }
 }

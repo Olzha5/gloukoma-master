@@ -12,6 +12,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isHiddenPassword = true;
+  bool isLoading = false;
   TextEditingController emailTextInputController = TextEditingController();
   TextEditingController passwordTextInputController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -20,7 +21,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     emailTextInputController.dispose();
     passwordTextInputController.dispose();
-
     super.dispose();
   }
 
@@ -32,36 +32,41 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> login() async {
     final navigator = Navigator.of(context);
-
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
+
+    setState(() {
+      isLoading = true;
+    });
 
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailTextInputController.text.trim(),
         password: passwordTextInputController.text.trim(),
       );
+      navigator.pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     } on FirebaseAuthException catch (e) {
-      print(e.code);
-
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        SnackBarService.showSnackBar(
-          context,
-          'Неправильный email или пароль. Повторите попытку',
-          true,
-        );
-        return;
-      } else {
-        SnackBarService.showSnackBar(
-          context,
-          'Неизвестная ошибка! Попробуйте еще раз или обратитесь в поддержку.',
-          true,
-        );
-        return;
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+        case 'wrong-password':
+          errorMessage = 'Неправильный email или пароль. Повторите попытку';
+          break;
+        case 'user-disabled':
+          errorMessage = 'Учетная запись заблокирована.';
+          break;
+        case 'too-many-requests':
+          errorMessage = 'Слишком много попыток входа. Попробуйте позже.';
+          break;
+        default:
+          errorMessage = 'Неизвестная ошибка! Попробуйте еще раз или обратитесь в поддержку.';
       }
+      SnackBarService.showSnackBar(context, errorMessage, true);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
-
-    navigator.pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
   }
 
   @override
@@ -77,66 +82,89 @@ class _LoginScreenState extends State<LoginScreen> {
           key: formKey,
           child: Column(
             children: [
-              TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-                controller: emailTextInputController,
-                validator: (email) =>
-                    email != null && !EmailValidator.validate(email)
-                        ? 'Введите правильный Email'
-                        : null,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Введите Email',
-                ),
-              ),
+              _buildEmailField(),
               const SizedBox(height: 30),
-              TextFormField(
-                autocorrect: false,
-                controller: passwordTextInputController,
-                obscureText: isHiddenPassword,
-                validator: (value) => value != null && value.length < 6
-                    ? 'Минимум 6 символов'
-                    : null,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: 'Введите пароль',
-                  suffix: InkWell(
-                    onTap: togglePasswordView,
-                    child: Icon(
-                      isHiddenPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
+              _buildPasswordField(),
               const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: login,
-                child: const Center(child: Text('Войти')),
-              ),
+              _buildLoginButton(),
               const SizedBox(height: 30),
-              TextButton(
-                onPressed: () => Navigator.of(context).pushNamed('/signup'),
-                child: const Text(
-                  'Регистрация',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () =>
-                    Navigator.of(context).pushNamed('/reset_password'),
-                child: const Text('Сбросить пароль'),
-              ),
+              _buildSignupButton(),
+              _buildResetPasswordButton(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextFormField(
+      keyboardType: TextInputType.emailAddress,
+      autocorrect: false,
+      controller: emailTextInputController,
+      validator: (email) =>
+      email != null && !EmailValidator.validate(email)
+          ? 'Введите правильный Email'
+          : null,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(),
+        hintText: 'Введите Email',
+      ),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      autocorrect: false,
+      controller: passwordTextInputController,
+      obscureText: isHiddenPassword,
+      validator: (value) => value != null && value.length < 6
+          ? 'Минимум 6 символов'
+          : null,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        hintText: 'Введите пароль',
+        suffix: InkWell(
+          onTap: togglePasswordView,
+          child: Icon(
+            isHiddenPassword
+                ? Icons.visibility_off
+                : Icons.visibility,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginButton() {
+    return ElevatedButton(
+      onPressed: isLoading ? null : login,
+      child: isLoading
+          ? CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      )
+          : const Center(child: Text('Войти')),
+    );
+  }
+
+  Widget _buildSignupButton() {
+    return TextButton(
+      onPressed: () => Navigator.of(context).pushNamed('/signup'),
+      child: const Text(
+        'Регистрация',
+        style: TextStyle(
+          decoration: TextDecoration.underline,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResetPasswordButton() {
+    return TextButton(
+      onPressed: () => Navigator.of(context).pushNamed('/reset_password'),
+      child: const Text('Сбросить пароль'),
     );
   }
 }
