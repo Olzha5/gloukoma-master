@@ -8,7 +8,6 @@ Future<List<User>> fetchUsers({top = true}) async {
   final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/get_top/${user?.email}/'));  // Замените на реальный URL
 
   if (response.statusCode == 200) {
-
     final jsonResponse = json.decode(response.body);
     List<User> users = [];
     for (int i = 0; i < jsonResponse[(top)? 'top' : 'score'].length; i++) {
@@ -62,10 +61,17 @@ class _UserRankingScreenState extends State<UserRankingScreen> {
     futureUsers = fetchUsers();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
+    // Список цветов для панелей
+    final List<Color> colors = [
+      Colors.red[100]!,
+      Colors.green[100]!,
+      Colors.blue[100]!,
+      Colors.yellow[100]!,
+      Colors.purple[100]!,
+    ];
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -87,9 +93,22 @@ class _UserRankingScreenState extends State<UserRankingScreen> {
               itemCount: users.length,
               itemBuilder: (context, index) {
                 final user = users[index];
-                return Card(
-                  color: Colors.white,
+                final color = colors[index % colors.length]; // Выбор цвета по индексу
+
+                return Container(
                   margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // Смещение тени
+                      ),
+                    ],
+                  ),
                   child: ListTile(
                     leading: Row(
                       mainAxisSize: MainAxisSize.min,
