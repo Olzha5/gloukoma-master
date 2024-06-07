@@ -2,7 +2,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'dart:math';
+final List<String> _avatars = [
+  'https://flyclipart.com/thumbs/med-boukrima-specialist-webmaster-php-e-commerce-web-developer-coder-avatar-1054388.png',
+  'https://yt3.ggpht.com/ytc/AKedOLQXIYjywJ9JwfQy-HPL84TxpEJAhqLQOjq7lMwV=s900-c-k-c0x00ffffff-no-rj',
+  'https://avatars.mds.yandex.net/i?id=23014985e9072d06ffde7fc691d6284bf55b77d2-9068519-images-thumbs&ref=rim&n=33&w=252&h=252',
+  'https://avatars.mds.yandex.net/i?id=5d03c304b337838db89a609969f60a6ca47d1f95-10512135-images-thumbs&ref=rim&n=33&w=252&h=252',
+  'https://avatars.mds.yandex.net/i?id=99774e884d870164659d37aac1468c07c7bd0a67-10933600-images-thumbs&ref=rim&n=33&w=252&h=252',
+  'https://avatars.mds.yandex.net/i?id=204fedfc91f56eaf57a5899b478e58ec5d69d18e-8268761-images-thumbs&ref=rim&n=33&w=252&h=252',
+  'https://avatars.mds.yandex.net/i?id=b6e446a4a74291d13d573b4890176f6b5d8665b6-8519693-images-thumbs&ref=rim&n=33&w=252&h=252',
+  'https://avatars.mds.yandex.net/i?id=2c23c5f676a1f240c0abd5b405fdd73a-5408886-images-thumbs&ref=rim&n=33&w=252&h=252',
+  'https://avatars.mds.yandex.net/i?id=dd2c8a5dcac85435bf246ef6df8732a952c92859-10544851-images-thumbs&ref=rim&n=33&w=252&h=252',
+  'https://avatars.mds.yandex.net/i?id=7932e342929c4ccac2ce0c968ba59dc17a2b1d15-9380132-images-thumbs&ref=rim&n=33&w=252&h=252',
+  'https://avatars.mds.yandex.net/i?id=6b3a690703cc80e7e02e796aea4a56fd986c16fe-9053088-images-thumbs&ref=rim&n=33&w=252&h=252',
+  'https://avatars.mds.yandex.net/i?id=e49d456994ade07a0bcd3f52e01489479994e20a-8312020-images-thumbs&ref=rim&n=33&w=252&h=252',
+];
 Future<List<User>> fetchUsers({top = true}) async {
   final user = FirebaseAuth.instance.currentUser;
   final response = await http.get(Uri.parse('http://olzhasna.beget.tech/api/get_top/${user?.email}/'));  // Замените на реальный URL
@@ -40,7 +54,7 @@ class User {
       name: json['username'],
       score: json['total_score'] ?? 0,
       duration: '',  // Заполните это поле в зависимости от вашего API
-      avatarUrl: 'https://example.com/default_avatar.png',  // Замените на реальный URL аватара
+      avatarUrl:  _avatars[ position % _avatars.length],  // Замените на реальный URL аватара
       position: position,
     );
   }
