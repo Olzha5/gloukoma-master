@@ -280,89 +280,89 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      drawer: Drawer(
-        width: 300,
-        backgroundColor: Colors.white,
-        child: Column(
-          children: [
-            SizedBox(
-              width: 300,
-              height: 220,
-              child: DrawerHeader(
-                decoration: const BoxDecoration(color: Colors.blue),
-                child: Center(
-                  child: ListTile(
-                    title: Center(
-                        child: Text(
-                          email,
-                          style: const TextStyle(color: Colors.white),
-                        )),
-                    onTap: () {
-                      (email == "Кіру")
-                          ? Navigator.of(context).pushNamed('/login')
-                          : Navigator.of(context).pushNamed('/account');
-                    },
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: 300,
-                    height: letter,
-                    child: ListTile(
-                      title: const Text('Глаукома туралы'),
-                      onTap: () {
-                        Navigator.of(context).pushNamed('/about_glaucoma');
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 300,
-                    height: letter,
-                    child: ListTile(
-                      title: const Text('Менің деректерім'),
-                      onTap: () async {
-                        Navigator.of(context).pushNamed('/my_data');
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 300,
-                    height: letter,
-                    child: ListTile(
-                      title: const Text('Менің режимім'),
-                      onTap: () async {
-                        final picker = ImagePicker();
-                        final pickedFile =
-                        await picker.getImage(source: ImageSource.gallery);
-
-                        if (pickedFile != null) {
-                          File imageFile = File(pickedFile.path);
-                          await uploadImage(imageFile);
-                        }
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 300,
-                    height: letter,
-                    child: ListTile(
-                      title: const Text('Офтальмологпен байланыс'),
-                      onTap: () {
-                        Navigator.of(context).pushNamed('/connect');
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      // drawer: Drawer(
+      //   width: 300,
+      //   backgroundColor: Colors.white,
+      //   child: Column(
+      //     children: [
+      //       SizedBox(
+      //         width: 300,
+      //         height: 220,
+      //         child: DrawerHeader(
+      //           decoration: const BoxDecoration(color: Colors.blue),
+      //           child: Center(
+      //             child: ListTile(
+      //               title: Center(
+      //                   child: Text(
+      //                     email,
+      //                     style: const TextStyle(color: Colors.white),
+      //                   )),
+      //               onTap: () {
+      //                 (email == "Кіру")
+      //                     ? Navigator.of(context).pushNamed('/login')
+      //                     : Navigator.of(context).pushNamed('/account');
+      //               },
+      //             ),
+      //           ),
+      //         ),
+      //       ),
+      //       Padding(
+      //         padding: const EdgeInsets.only(left: 30),
+      //         child: Column(
+      //           children: [
+      //             SizedBox(
+      //               width: 300,
+      //               height: letter,
+      //               child: ListTile(
+      //                 title: const Text('Education app туралы'),
+      //                 onTap: () {
+      //                   Navigator.of(context).pushNamed('/about_glaucoma');
+      //                 },
+      //               ),
+      //             ),
+      //             SizedBox(
+      //               width: 300,
+      //               height: letter,
+      //               child: ListTile(
+      //                 title: const Text('Менің деректерім'),
+      //                 onTap: () async {
+      //                   Navigator.of(context).pushNamed('/my_data');
+      //                 },
+      //               ),
+      //             ),
+      //             SizedBox(
+      //               width: 300,
+      //               height: letter,
+      //               child: ListTile(
+      //                 title: const Text('Менің режимім'),
+      //                 onTap: () async {
+      //                   final picker = ImagePicker();
+      //                   final pickedFile =
+      //                   await picker.getImage(source: ImageSource.gallery);
+      //
+      //                   if (pickedFile != null) {
+      //                     File imageFile = File(pickedFile.path);
+      //                     await uploadImage(imageFile);
+      //                   }
+      //                 },
+      //               ),
+      //             ),
+      //             SizedBox(
+      //               width: 300,
+      //               height: letter,
+      //               child: ListTile(
+      //                 title: const Text('Админмен байланыс'),
+      //                 onTap: () {
+      //                   Navigator.of(context).pushNamed('/connect');
+      //                 },
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
       body: Center(
         child: FutureBuilder<List<Course>>(
           future: futureCourses,

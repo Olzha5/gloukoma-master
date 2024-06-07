@@ -97,26 +97,26 @@ class _StepsState extends State<Steps> {
               Column(
                 children:[
 
-                  YoutubePlayerBuilder(
-                    player: YoutubePlayer(
-                      controller: YoutubePlayerController(
-                initialVideoId: step.videoId,
-                flags: const YoutubePlayerFlags(
-                  autoPlay: false,
-                ),
-              ),
-                      showVideoProgressIndicator: true,
-                      progressIndicatorColor: Colors.blue,
-                      progressColors: const ProgressBarColors(
-                        playedColor: Colors.blue,
-                        handleColor: Colors.cyan,
-                      ),
-                      onReady: () {
-
-                      },
-                    ),
-                    builder: (context, player) => player,
-                  ),
+              //     YoutubePlayerBuilder(
+              //       player: YoutubePlayer(
+              //         controller: YoutubePlayerController(
+              //   initialVideoId: step.videoId,
+              //   flags: const YoutubePlayerFlags(
+              //     autoPlay: false,
+              //   ),
+              // ),
+              //         showVideoProgressIndicator: true,
+              //         progressIndicatorColor: Colors.blue,
+              //         progressColors: const ProgressBarColors(
+              //           playedColor: Colors.blue,
+              //           handleColor: Colors.cyan,
+              //         ),
+              //         onReady: () {
+              //
+              //         },
+              //       ),
+              //       builder: (context, player) => player,
+              //     ),
 
                   ListTile(
                     title: Text(step.body),

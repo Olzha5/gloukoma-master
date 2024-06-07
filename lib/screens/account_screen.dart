@@ -150,7 +150,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 ListTile(
                   leading: Icon(Icons.ac_unit, color: Colors.blue),
-                  title: Text('Заморозка'),
+                  title: Text('Қатыру'),
                   onTap: () {
                     // Нажатие әрекеті
                   },
@@ -173,7 +173,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   leading: Icon(Icons.info_outline, color: Colors.blue),
                   title: Text('Біз туралы'),
                   onTap: () {
-                    Navigator.of(context).pushNamed('/about_glaucoma');
+                    Navigator.of(context).pushNamed('/about_glaukoma');
                   },
                 ),
                 SizedBox(height: 20),
